@@ -1,5 +1,7 @@
 use std::fs;
 use std::io::{BufRead, BufReader, Error};
+use std::env;
+use dotenv::dotenv;
 extern crate num;
 #[macro_use]
 extern crate num_derive;
@@ -34,7 +36,7 @@ impl Outcome {
     }
 }
 
-fn decrypt_move_1 (their_move: &str) -> Move {
+fn decrypt_move(their_move: &str) -> Move {
     match their_move {
         "A" => return Move::Rock,
         "B" => return Move::Paper,
@@ -67,8 +69,8 @@ fn get_outcome(my_move: Move, their_move: Move) -> Outcome {
 
 fn get_total_score_1(line: &str) -> i32 {
     let parts: Vec<&str> = line.split_whitespace().collect();
-    let their_move = decrypt_move_1(parts[0]);
-    let my_move = decrypt_move_1(parts[1]);
+    let their_move = decrypt_move(parts[0]);
+    let my_move = decrypt_move(parts[1]);
     let outcome = get_outcome(my_move, their_move);
     return my_move.score() + outcome.score();
 }
@@ -83,21 +85,20 @@ fn fix_game(outcome: Outcome, their_move: Move) -> Move {
 
 fn get_total_score_2(line: &str) -> i32 {
     let parts: Vec<&str> = line.split_whitespace().collect();
-    let their_move = decrypt_move_1(parts[0]);
+    let their_move = decrypt_move(parts[0]);
     let outcome = decrypt_outcome(parts[1]);
     let my_move = fix_game(outcome, their_move);
     return my_move.score() + outcome.score();
 }
 
 fn main() -> Result<(), Error> {
-    let buff_reader = BufReader::new(fs::File::open("/Users/aashiq/projects/aoc-2022/inputs/2.txt")?);
-    let mut total_1 = 0;
-    let mut total_2: i32 = 0;
-    for line in buff_reader.lines() {
-        let line = line.expect("bad line");
-        total_1 += get_total_score_1(&line);
-        total_2 += get_total_score_2(&line);
-    }
+    dotenv().ok();
+    let input_dir = env::var("INPUT_DIR").expect("INPUT_DIR is not set");
+    let input = input_dir + "/2.txt";
+    let buff_reader = BufReader::new(fs::File::open(input)?);
+    let instructions = buff_reader.lines().map(|line| line.expect("bad line")).collect::<Vec<String>>();
+    let total_1 = instructions.iter().map(|line| get_total_score_1(line)).sum::<i32>();
+    let total_2 = instructions.iter().map(|line| get_total_score_2(line)).sum::<i32>();
     println!("total_1: {}", total_1);
     println!("total_2: {}", total_2);
     Ok(())

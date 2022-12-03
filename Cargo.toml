@@ -6,15 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+dotenv = "0.15.0"
+itertools = "0.10.5"
 num = "0.4"
 num-derive = "0.3"
 num-traits = "0.2"
 sscanf = "0.4.0"
-
-[[bin]]
-name="aoc-2022-1"
-path="src/aoc-2022-1.rs"
-
-[[bin]]
-name="aoc-2022-2"
-path="src/aoc-2022-2.rs"
