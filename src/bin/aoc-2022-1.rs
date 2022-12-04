@@ -1,20 +1,17 @@
-use std::fs;
-use std::io::{BufRead, BufReader, Error};
-use itertools::Itertools;
 use std::env;
 use dotenv::dotenv;
 
-fn main() -> Result<(), Error> {
+fn total(s: &str) -> i32 {
+    return s.split("\n").map(|x| x.parse::<i32>().unwrap()).sum::<i32>();
+}
+
+fn main() {
     dotenv().ok();
     let input_dir = env::var("INPUT_DIR").expect("INPUT_DIR is not set");
     let input = input_dir + "/1.txt";
-    let elves: Vec<i32> = itertools::sorted(BufReader::new(fs::File::open(input)?)
-        .lines().map(|l| l.unwrap())
-        .group_by(|l| !l.is_empty()).into_iter()
-        .map(|(_, group)| {
-            group.map(|g| g.parse::<i32>().unwrap_or(0)).sum::<i32>()
-        })).collect();
-    println!("max: {}", elves.iter().last().unwrap());
-    println!("top 3: {}", elves.iter().rev().take(3).sum::<i32>());
-    Ok(())
+    let raw_input_data = std::fs::read_to_string(input).unwrap();
+    let mut elves = raw_input_data.split("\n\n").map(total).collect::<Vec<i32> >();
+    elves.sort_by(|a, b| b.cmp(a));
+    println!("max: {}", elves[0]);
+    println!("top 3: {}", elves.iter().take(3).sum::<i32>());
 }

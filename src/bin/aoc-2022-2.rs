@@ -1,5 +1,3 @@
-use std::fs;
-use std::io::{BufRead, BufReader, Error};
 use std::env;
 use dotenv::dotenv;
 extern crate num;
@@ -91,15 +89,14 @@ fn get_total_score_2(line: &str) -> i32 {
     return my_move.score() + outcome.score();
 }
 
-fn main() -> Result<(), Error> {
+fn main() {
     dotenv().ok();
     let input_dir = env::var("INPUT_DIR").expect("INPUT_DIR is not set");
     let input = input_dir + "/2.txt";
-    let buff_reader = BufReader::new(fs::File::open(input)?);
-    let instructions = buff_reader.lines().map(|line| line.expect("bad line")).collect::<Vec<String>>();
-    let total_1 = instructions.iter().map(|line| get_total_score_1(line)).sum::<i32>();
-    let total_2 = instructions.iter().map(|line| get_total_score_2(line)).sum::<i32>();
+    let raw_input_data = std::fs::read_to_string(input).unwrap();
+    let instructions = raw_input_data.split("\n");
+    let total_1 = instructions.clone().map(|line| get_total_score_1(line)).sum::<i32>();
+    let total_2 = instructions.map(|line| get_total_score_2(line)).sum::<i32>();
     println!("total_1: {}", total_1);
     println!("total_2: {}", total_2);
-    Ok(())
 }
