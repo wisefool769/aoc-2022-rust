@@ -30,13 +30,7 @@ zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw: first marker after character 11
 How many characters need to be processed before the first start-of-packet marker is detected?
  */
 use std::collections::{HashSet, VecDeque};
-
-fn read_input() -> String {
-    dotenv::dotenv().ok();
-    let id = std::env::var("INPUT_DIR").expect("INPUT_DIR is not set");
-    let input = id + "/6.txt";
-    return std::fs::read_to_string(input).unwrap();
-}
+use aoc_2022::read_input;
 
 fn check_uniqs(v: &VecDeque<char>, n: usize) -> bool {
     let set: HashSet<&char> = HashSet::from_iter(v.iter());
@@ -58,7 +52,8 @@ fn find_marker(input: &str, n: usize) -> usize {
 }
 
 fn main() {
-    let input = read_input();
+    let day = 6;
+    let input = read_input(day);
     println!("start-of-packet: {}", find_marker(&input, 4));
     println!("start-of-packet: {}", find_marker(&input, 14));
 }
